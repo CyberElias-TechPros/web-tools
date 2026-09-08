@@ -1,0 +1,33 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# build output
+dist/
+dist-ssr/
+*.local
+
+# test + tooling caches
+coverage/
+.vitest/
+*.tsbuildinfo
+.eslintcache
+
+# platform
+.vercel/
+.DS_Store
+Thumbs.db
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.log
+
+# editors
+.idea/
+.vscode/*
+!.vscode/extensions.json

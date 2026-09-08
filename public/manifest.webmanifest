@@ -1,0 +1,47 @@
+{
+  "name": "Web Tools — 10 in-browser utilities",
+  "short_name": "Web Tools",
+  "description": "Ten fast, private developer and productivity utilities that run entirely in your browser: markdown cleaner, regex tester, JSON formatter, image compressor, CSV/JSON converter, file renamer, timezone planner, SVG generator, text diff and password generator.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
+  "categories": ["utilities", "productivity", "developer"],
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "JSON formatter", "url": "/tools/json-formatter" },
+    { "name": "Password generator", "url": "/tools/password-generator" },
+    { "name": "Image compressor", "url": "/tools/image-compressor" },
+    { "name": "Text diff", "url": "/tools/text-diff" }
+  ]
+}

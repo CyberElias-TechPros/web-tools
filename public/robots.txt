@@ -1,0 +1,5 @@
+# Every page here is public, static and safe to index.
+User-agent: *
+Allow: /
+
+Sitemap: https://web-tools.vercel.app/sitemap.xml
