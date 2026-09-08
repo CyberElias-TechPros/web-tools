@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="color-scheme" content="dark light" />
+
+    <title>Web Tools — 10 fast, private, in-browser utilities</title>
+    <meta
+      name="description"
+      content="Ten free developer and productivity tools that run entirely in your browser: markdown cleaner, regex tester, JSON formatter, image compressor, CSV/JSON converter, file renamer, timezone planner, SVG generator, text diff and password generator. No uploads, no accounts, no tracking."
+    />
+    <link rel="canonical" href="https://web-tools.vercel.app/" />
+    <meta name="robots" content="index, follow" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Web Tools" />
+    <meta property="og:title" content="Web Tools — 10 fast, private, in-browser utilities" />
+    <meta
+      property="og:description"
+      content="Markdown cleaner, regex tester, JSON formatter, image compressor, CSV/JSON converter, file renamer, timezone planner, SVG generator, text diff and password generator. Everything runs locally in your browser."
+    />
+    <meta property="og:url" content="https://web-tools.vercel.app/" />
+    <meta property="og:image" content="https://web-tools.vercel.app/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Web Tools — ten fast, private utilities that run entirely in your browser." />
+    <meta property="og:locale" content="en" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Web Tools — 10 fast, private, in-browser utilities" />
+    <meta
+      name="twitter:description"
+      content="Markdown cleaner, regex tester, JSON formatter, image compressor, CSV/JSON converter, file renamer, timezone planner, SVG generator, text diff and password generator."
+    />
+    <meta name="twitter:image" content="https://web-tools.vercel.app/og.png" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Web Tools",
+        "url": "https://web-tools.vercel.app/",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any",
+        "browserRequirements": "Requires JavaScript. Works in any modern browser.",
+        "description": "Ten privacy-first browser utilities for developers and knowledge workers. All processing happens locally on your device.",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "featureList": [
+          "Markdown to clean text converter",
+          "Regular expression visualiser and tester",
+          "JSON validator, repairer and formatter",
+          "Bulk image compressor and resizer",
+          "CSV to JSON and JSON to CSV converter",
+          "Batch file extension renamer",
+          "Time zone meeting planner",
+          "SVG wave and blob generator",
+          "Smart text diff checker",
+          "Secure password and passphrase generator"
+        ]
+      }
+    </script>
+
+    <script>
+      // Apply the saved theme before first paint to avoid a flash of the wrong theme.
+      (function () {
+        try {
+          var t = localStorage.getItem('wt:theme');
+          var system = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var dark = t === 'dark' ? true : t === 'light' ? false : system;
+          document.documentElement.classList.toggle('dark', dark);
+        } catch (e) {
+          /* localStorage can be blocked; the default dark class stays. */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <div style="padding: 2rem; font-family: system-ui, sans-serif">
+        <h1>Web Tools</h1>
+        <p>
+          These utilities do all of their work inside your browser, so JavaScript must be enabled to
+          use them.
+        </p>
+      </div>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
