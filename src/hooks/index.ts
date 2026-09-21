@@ -183,3 +183,19 @@ export function useMediaQuery(query: string): boolean {
   // Server/prerender snapshot: assume the small layout, which degrades safely.
   return useSyncExternalStore(subscribe, getSnapshot, () => false);
 }
+
+/**
+ * Text state that also remembers the last value passing `isValid`. While the
+ * user is mid-edit and the text is invalid, dependent UI can keep using the
+ * last good value instead of blanking out. Returns [text, setText, lastValid, isValid].
+ */
+export function useValidatedText(initial: string, isValid: (text: string) => boolean): [string, (value: string) => void, string, boolean] {
+  const [state, setState] = useState({ text: initial, valid: initial });
+  const setText = useCallback(
+    (text: string) => {
+      setState((prev) => ({ text, valid: isValid(text) ? text : prev.valid }));
+    },
+    [isValid],
+  );
+  return [state.text, setText, state.valid, isValid(state.text)];
+}

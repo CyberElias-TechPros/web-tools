@@ -37,9 +37,11 @@ export function CopyButton({
         if (!ok) setTimeout(() => setFailed(false), 2500);
       }}
       aria-live="polite"
+      aria-label={label ? undefined : failed ? 'Press Ctrl+C to copy' : isCopied ? 'Copied' : 'Copy'}
+      title={label ? undefined : 'Copy to clipboard'}
     >
       {isCopied ? <Check size={15} aria-hidden /> : <Copy size={15} aria-hidden />}
-      <span>{failed ? 'Press Ctrl+C' : isCopied ? 'Copied' : label}</span>
+      {(label || failed || isCopied) && <span>{failed ? 'Press Ctrl+C' : isCopied ? 'Copied' : label}</span>}
     </button>
   );
 }
@@ -110,12 +112,13 @@ interface ToggleProps {
   label: string;
   hint?: string;
   disabled?: boolean;
+  className?: string;
 }
 
-export function Toggle({ checked, onChange, label, hint, disabled }: ToggleProps): React.ReactElement {
+export function Toggle({ checked, onChange, label, hint, disabled, className = '' }: ToggleProps): React.ReactElement {
   const id = useId();
   return (
-    <div className="flex items-start gap-2.5">
+    <div className={`flex items-start gap-2.5 ${className}`}>
       <input
         id={id}
         type="checkbox"
@@ -427,4 +430,245 @@ export function useToasts(): {
   };
 
   return { toasts, push, dismiss };
+}
+
+/* -------------------------------------------------------------------------- */
+/* Form fields                                                                */
+/* -------------------------------------------------------------------------- */
+
+interface SelectFieldProps<T extends string> {
+  label: string;
+  value: T;
+  onChange: (value: T) => void;
+  options: ReadonlyArray<{ value: T; label: string }>;
+  hint?: string;
+  className?: string;
+  disabled?: boolean;
+}
+
+export function SelectField<T extends string>({
+  label,
+  value,
+  onChange,
+  options,
+  hint,
+  className = '',
+  disabled,
+}: SelectFieldProps<T>): React.ReactElement {
+  const id = useId();
+  return (
+    <div className={`min-w-0 ${className}`}>
+      <label className="label" htmlFor={id}>
+        {label}
+      </label>
+      <select id={id} className="field" value={value} disabled={disabled} onChange={(e) => onChange(e.target.value as T)}>
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+      {hint && <p className="muted mt-1 text-xs">{hint}</p>}
+    </div>
+  );
+}
+
+interface NumberFieldProps {
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  hint?: string;
+  suffix?: string;
+  className?: string;
+  disabled?: boolean;
+}
+
+export function NumberField({ label, value, onChange, min, max, step, hint, suffix, className = '', disabled }: NumberFieldProps): React.ReactElement {
+  const id = useId();
+  return (
+    <div className={`min-w-0 ${className}`}>
+      <label className="label" htmlFor={id}>
+        {label}
+      </label>
+      <div className="relative">
+        <input
+          id={id}
+          type="number"
+          inputMode="decimal"
+          className={`field font-mono tabular-nums ${suffix ? 'pr-12' : ''}`}
+          value={Number.isFinite(value) ? value : ''}
+          min={min}
+          max={max}
+          step={step}
+          disabled={disabled}
+          onChange={(e) => {
+            const next = e.target.valueAsNumber;
+            onChange(Number.isNaN(next) ? 0 : next);
+          }}
+        />
+        {suffix && (
+          <span className="muted pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-xs">{suffix}</span>
+        )}
+      </div>
+      {hint && <p className="muted mt-1 text-xs">{hint}</p>}
+    </div>
+  );
+}
+
+interface TextFieldProps {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  hint?: string;
+  type?: 'text' | 'password' | 'email' | 'url' | 'date' | 'time' | 'datetime-local' | 'search';
+  mono?: boolean;
+  className?: string;
+  invalid?: boolean;
+  autoFocus?: boolean;
+  spellCheck?: boolean;
+  list?: string;
+  maxLength?: number;
+  disabled?: boolean;
+  suffix?: ReactNode;
+}
+
+export function TextField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  hint,
+  type = 'text',
+  mono,
+  className = '',
+  invalid,
+  autoFocus,
+  spellCheck = false,
+  list,
+  maxLength,
+  disabled,
+  suffix,
+}: TextFieldProps): React.ReactElement {
+  const id = useId();
+  return (
+    <div className={`min-w-0 ${className}`}>
+      <label className="label" htmlFor={id}>
+        {label}
+      </label>
+      <div className="relative">
+        <input
+          id={id}
+          type={type}
+          className={`field ${mono ? 'font-mono' : ''} ${suffix ? 'pr-10' : ''}`}
+          value={value}
+          placeholder={placeholder}
+          autoFocus={autoFocus}
+          spellCheck={spellCheck}
+          list={list}
+          maxLength={maxLength}
+          disabled={disabled}
+          aria-invalid={invalid || undefined}
+          onChange={(e) => onChange(e.target.value)}
+        />
+        {suffix && <span className="absolute top-1/2 right-2 -translate-y-1/2">{suffix}</span>}
+      </div>
+      {hint && <p className={`mt-1 text-xs ${invalid ? '' : 'muted'}`} style={invalid ? { color: 'var(--danger)' } : undefined}>{hint}</p>}
+    </div>
+  );
+}
+
+interface ColorFieldProps {
+  label: string;
+  value: string;
+  onChange: (hex: string) => void;
+  className?: string;
+}
+
+/** Native colour picker paired with an editable hex field. */
+export function ColorField({ label, value, onChange, className = '' }: ColorFieldProps): React.ReactElement {
+  const id = useId();
+  const safe = /^#[0-9a-f]{6}$/i.test(value) ? value : '#000000';
+  return (
+    <div className={`min-w-0 ${className}`}>
+      <label className="label" htmlFor={id}>
+        {label}
+      </label>
+      <div className="flex items-center gap-2">
+        <input id={id} type="color" value={safe} onChange={(e) => onChange(e.target.value)} />
+        <input
+          type="text"
+          className="field font-mono"
+          value={value}
+          aria-label={`${label} hex value`}
+          onChange={(e) => onChange(e.target.value)}
+          spellCheck={false}
+        />
+      </div>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Progress                                                                   */
+/* -------------------------------------------------------------------------- */
+
+interface ProgressBarProps {
+  value: number;
+  max?: number;
+  label: string;
+  className?: string;
+  tone?: 'accent' | 'ok' | 'warn' | 'danger';
+  showValue?: boolean;
+}
+
+export function ProgressBar({ value, max = 100, label, className = '', tone = 'accent', showValue }: ProgressBarProps): React.ReactElement {
+  const pct = max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0;
+  const color = tone === 'accent' ? 'var(--accent)' : tone === 'ok' ? 'var(--ok)' : tone === 'warn' ? 'var(--warn)' : 'var(--danger)';
+  return (
+    <div className={className}>
+      {showValue && (
+        <div className="mb-1 flex items-baseline justify-between text-xs">
+          <span className="muted">{label}</span>
+          <span className="font-mono tabular-nums">{Math.round(pct)}%</span>
+        </div>
+      )}
+      <div
+        role="progressbar"
+        aria-label={label}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(pct)}
+        className="h-2 w-full overflow-hidden rounded-full"
+        style={{ background: 'var(--surface-3)' }}
+      >
+        <div
+          className="h-full rounded-full transition-[width] duration-500"
+          style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${color}, color-mix(in oklab, ${color} 70%, white))`, boxShadow: `0 0 12px -2px ${color}` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+/** Inline busy indicator for async work. */
+export function Spinner({ label = 'Working…', className = '' }: { label?: string; className?: string }): React.ReactElement {
+  return (
+    <span className={`inline-flex items-center gap-2 text-sm ${className}`} role="status">
+      <span
+        className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+        style={{ color: 'var(--accent)' }}
+        aria-hidden
+      />
+      <span className="muted">{label}</span>
+    </span>
+  );
+}
+
+/** Row of primary/secondary actions with consistent spacing. */
+export function ActionBar({ children, className = '' }: { children: ReactNode; className?: string }): React.ReactElement {
+  return <div className={`flex flex-wrap items-center gap-2 ${className}`}>{children}</div>;
 }

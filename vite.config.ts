@@ -21,12 +21,21 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react-router')) return 'router';
-            if (id.includes('react-dom') || id.includes('/react/')) return 'react';
-            return 'vendor';
-          }
-          return undefined;
+          // Vite's own preload helpers are shared by every lazy route; keep them
+          // with the shell so no heavy vendor chunk gets dragged in by accident.
+          if (id.includes('vite/preload-helper') || id.includes('vite/modulepreload-polyfill')) return 'shell';
+          if (!id.includes('node_modules')) return undefined;
+          // Heavy, tool-specific libraries get their own chunks so the shell
+          // never pays for them; they load with the first tool that needs them.
+          if (id.includes('pdf-lib') || id.includes('@pdf-lib') || id.includes('/pako/')) return 'pdf-lib';
+          if (id.includes('sql-formatter')) return 'sql-formatter';
+          if (id.includes('/yaml/')) return 'yaml';
+          if (id.includes('/uqr/')) return 'qr';
+          if (id.includes('/motion') || id.includes('framer-motion')) return 'motion';
+          if (id.includes('lucide-react')) return 'icons';
+          if (id.includes('react-router')) return 'router';
+          if (id.includes('react-dom') || id.includes('/react/') || id.includes('/scheduler/')) return 'react';
+          return 'vendor';
         },
       },
     },

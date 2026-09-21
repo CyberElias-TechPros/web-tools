@@ -1,7 +1,7 @@
 {
-  "name": "Web Tools — 10 in-browser utilities",
+  "name": "Web Tools — 79 in-browser utilities",
   "short_name": "Web Tools",
-  "description": "Ten fast, private developer and productivity utilities that run entirely in your browser: markdown cleaner, regex tester, JSON formatter, image compressor, CSV/JSON converter, file renamer, timezone planner, SVG generator, text diff and password generator.",
+  "description": "79 free developer, document and design tools that run entirely in your browser: combine Word documents into PDFs, merge, split and organise PDFs, convert Excel and PowerPoint files, compress images, generate QR codes, format JSON and SQL, test regexes and much more. No uploads, no accounts, no tracking.",
   "id": "/",
   "start_url": "/",
   "scope": "/",
