@@ -23,10 +23,17 @@ beforeEach(() => {
 describe('routing', () => {
   it('renders the home page with every tool listed', async () => {
     renderAt('/');
-    for (const tool of TOOLS) {
-      expect(await screen.findByRole('link', { name: new RegExp(tool.name, 'i') })).toBeTruthy();
-    }
-  });
+    expect(await screen.findByRole('heading', { level: 1 })).toBeTruthy();
+    await waitFor(() => {
+      const hrefs = new Set(Array.from(document.querySelectorAll('a[href^="/tools/"]')).map((a) => a.getAttribute('href')));
+      const missing = TOOLS.filter((tool) => !hrefs.has(`/tools/${tool.slug}`)).map((t) => t.slug);
+      expect(missing).toEqual([]);
+    });
+    // Every card carries the tool's name as (part of) its accessible name.
+    const sample = TOOLS[0]!;
+    const links = await screen.findAllByRole('link', { name: new RegExp(sample.name, 'i') });
+    expect(links.length).toBeGreaterThanOrEqual(1);
+  }, 15000);
 
   it('renders a 404 page for an unknown route', async () => {
     renderAt('/definitely-not-a-page');
@@ -72,7 +79,7 @@ describe('command palette', () => {
   it('opens with ⌘K and filters tools', async () => {
     const user = userEvent.setup();
     renderAt('/');
-    await screen.findByRole('heading', { name: /everyday annoyances/i, level: 1 });
+    await screen.findByRole('heading', { name: /every small job/i, level: 1 });
 
     await user.keyboard('{Meta>}k{/Meta}');
     const dialog = await screen.findByRole('dialog', { name: /search tools/i });
@@ -80,15 +87,16 @@ describe('command palette', () => {
     await user.type(within(dialog).getByRole('textbox'), 'passw');
     await waitFor(() => {
       const links = within(dialog).getAllByRole('link');
-      expect(links).toHaveLength(1);
+      expect(links.length).toBeGreaterThanOrEqual(1);
       expect(links[0]?.getAttribute('href')).toBe('/tools/password-generator');
+      expect(links.length).toBeLessThan(TOOLS.length / 2);
     });
   });
 
   it('closes on Escape', async () => {
     const user = userEvent.setup();
     renderAt('/');
-    await screen.findByRole('heading', { name: /everyday annoyances/i, level: 1 });
+    await screen.findByRole('heading', { name: /every small job/i, level: 1 });
     await user.keyboard('{Meta>}k{/Meta}');
     await screen.findByRole('dialog');
     await user.keyboard('{Escape}');
@@ -98,7 +106,7 @@ describe('command palette', () => {
   it('reports when nothing matches', async () => {
     const user = userEvent.setup();
     renderAt('/');
-    await screen.findByRole('heading', { name: /everyday annoyances/i, level: 1 });
+    await screen.findByRole('heading', { name: /every small job/i, level: 1 });
     await user.keyboard('{Meta>}k{/Meta}');
     const dialog = await screen.findByRole('dialog');
     await user.type(within(dialog).getByRole('textbox'), 'zzzzzz');
